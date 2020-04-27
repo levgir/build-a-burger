@@ -1,6 +1,8 @@
 import React from "react";
 import Burger from "../../Burger/Burger";
 import BuildControls from "../../Burger/BuildControls/BuildControls";
+import Modal from "../../../components/UI/Modal/Modal";
+import OrderSummary from "../../../components/Burger/OrderSummary/OrderSummary";
 
 const INGREDIENT_PRICES = {
   salad: 0.5,
@@ -18,7 +20,20 @@ class BurgerBuilder extends React.Component {
       meat: 0,
     },
     totalPrice: 4,
+    purchasable: false,
+    checkingOut: false,
   };
+
+  updatePurchaseState(ingredients) {
+    const sum = Object.keys(ingredients)
+      .map((key) => {
+        return ingredients[key];
+      })
+      .reduce((sum, el) => {
+        return sum + el;
+      }, 0);
+    this.setState({ purchasable: sum > 0 });
+  }
 
   addIngredientHandler = (type) => {
     const oldCount = this.state.ingredients[type];
@@ -31,6 +46,7 @@ class BurgerBuilder extends React.Component {
     const oldPrice = this.state.totalPrice;
     const newPrice = oldPrice + priceAddition;
     this.setState({ totalPrice: newPrice, ingredients: updatedIngredients });
+    this.updatePurchaseState(updatedIngredients);
   };
 
   removeIngredientHandler = (type) => {
@@ -47,6 +63,11 @@ class BurgerBuilder extends React.Component {
     const oldPrice = this.state.totalPrice;
     const newPrice = oldPrice - priceAddition;
     this.setState({ totalPrice: newPrice, ingredients: updatedIngredients });
+    this.updatePurchaseState(updatedIngredients);
+  };
+
+  checkoutHandler = () => {
+    this.setState({ checkingOut: true });
   };
 
   render() {
@@ -58,12 +79,17 @@ class BurgerBuilder extends React.Component {
     }
     return (
       <>
+        <Modal show={this.state.checkingOut}>
+          <OrderSummary ingredients={this.state.ingredients} />
+        </Modal>
         <Burger ingredients={this.state.ingredients} />
         <BuildControls
           addIngredientHandler={this.addIngredientHandler}
           removeIngredientHandler={this.removeIngredientHandler}
           disabled={disabledInfo}
           price={this.state.totalPrice}
+          purchasable={this.state.purchasable}
+          checkoutHandler={this.checkoutHandler}
         />
       </>
     );

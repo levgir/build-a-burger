@@ -11,6 +11,7 @@ const controls = [
 
 const BuildControls = (props) => (
   <div className={classes.BuildControls}>
+    {console.log(props)}
     <p>
       Current Price: <strong>{props.price.toFixed(2)}</strong>
     </p>
@@ -23,6 +24,13 @@ const BuildControls = (props) => (
         disabled={props.disabled[ctrl.type]}
       />
     ))}
+    <button
+      className={classes.OrderButton}
+      disabled={!props.purchasable}
+      onClick={props.checkoutHandler}
+    >
+      Order Now
+    </button>
   </div>
 );
 
