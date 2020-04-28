@@ -11,7 +11,6 @@ const controls = [
 
 const BuildControls = (props) => (
   <div className={classes.BuildControls}>
-    {console.log(props)}
     <p>
       Current Price: <strong>{props.price.toFixed(2)}</strong>
     </p>
